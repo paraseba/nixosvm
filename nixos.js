@@ -19,7 +19,8 @@
     "userPassword": null,
     "userAuthorizedKey": null,
 
-    "randomizeDisk": "true"
+    "randomizeDisk": "true",
+    "localSSHPort": "2222"
   },
 
   "builders": [
@@ -28,13 +29,26 @@
 
       "vboxmanage": [
         ["modifyvm", "{{.Name}}", "--memory", "{{user `memoryMB`}}"],
-        ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
+        ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
+        ["modifyvm", "{{.Name}}", "--nictype1", "virtio"],
+        ["modifyvm", "{{.Name}}", "--clipboard", "bidirectional"],
+        ["modifyvm", "{{.Name}}", "--vram", "20"]
       ],
 
       "vboxmanage_post": [
         ["storageattach", "{{.Name}}",
-        "--storagectl", "IDE Controller",
-        "--device", "0", "--port", "0", "--medium", "none"]
+         "--storagectl", "IDE Controller",
+         "--device", "0", "--port", "0", "--medium", "none"
+        ],
+        ["modifyvm", "{{.Name}}",
+         "--natpf1", "guestssh,tcp,127.0.0.1,{{user `localSSHPort`}},,22"
+        ],
+        ["modifyvm", "{{.Name}}",
+         "--natpf1", "guestserv1,tcp,127.0.0.1,9080,,8080"
+        ],
+        ["modifyvm", "{{.Name}}",
+         "--natpf1", "guestserv2,tcp,127.0.0.1,9081,,8081"
+        ]
       ],
 
       "iso_url": "{{user `nixosIsoUrl`}}",
