@@ -3,7 +3,7 @@
 
   "variables": {
     "nixosIsoUrl": "https://nixos.org/releases/nixos/latest-iso-minimal-x86_64-linux",
-    "nixosIsoSha256": "893e4596469cf872bebb880134622ddcdfcff3040761f2aad259f6aa3b4ba87e",
+    "nixosIsoSha256": null,
 
     "memoryMB": "4096",
     "cpus": "2",
@@ -85,12 +85,14 @@
       "source": "scripts/custom.nix",
       "destination": "/tmp/custom.nix"
     },
-
+    { "type": "file",
+      "source": "scripts/base.nix",
+      "destination": "/tmp/base.nix"
+    },
     { "type": "file",
       "source": "scripts/postinstall.sh",
       "destination": "/tmp/postinstall.sh"
     },
-
     { "type": "shell",
       "script": "./scripts/install.sh",
       "environment_vars": [

@@ -75,18 +75,19 @@ mount /dev/disk/by-id/*HARDDISK*part1 /mnt/boot
 echo "Generating configuration files"
 nixos-generate-config --root /mnt
 
+mv /tmp/base.nix /mnt/etc/nixos/base.nix
 mv /tmp/custom.nix /mnt/etc/nixos/custom.nix
 
 #generate a random host-id with the right format (8 hex chars)
 hostId=$(head -c4 /dev/urandom | od -A none -t x4 |  tr -d '[[:space:]]')
-sed -i "s|HOSTNAME|$hostName|g" /mnt/etc/nixos/custom.nix
-sed -i "s|HOSTID|$hostId|g" /mnt/etc/nixos/custom.nix
-sed -i "s|USER|$userName|g" /mnt/etc/nixos/custom.nix
+sed -i "s|HOSTNAME|$hostName|g" /mnt/etc/nixos/base.nix
+sed -i "s|HOSTID|$hostId|g" /mnt/etc/nixos/base.nix
+sed -i "s|USER|$userName|g" /mnt/etc/nixos/base.nix
 # fixme escape password
-sed -i "s|PASSWORD|$userPassword|g" /mnt/etc/nixos/custom.nix
-sed -i "s|SSHKEY|$userAuthorizedKey|g" /mnt/etc/nixos/custom.nix
-sed -i "s|KEYMAP|$consoleKeyMap|g" /mnt/etc/nixos/custom.nix
-sed -i "s|.*hardware-configuration.nix.*|./hardware-configuration.nix ./custom.nix|" /mnt/etc/nixos/configuration.nix
+sed -i "s|PASSWORD|$userPassword|g" /mnt/etc/nixos/base.nix
+sed -i "s|SSHKEY|$userAuthorizedKey|g" /mnt/etc/nixos/base.nix
+sed -i "s|KEYMAP|$consoleKeyMap|g" /mnt/etc/nixos/base.nix
+sed -i "s|.*hardware-configuration.nix.*|./hardware-configuration.nix ./base.nix ./custom.nix|" /mnt/etc/nixos/configuration.nix
 
 cat /mnt/etc/nixos/*
 
